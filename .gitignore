@@ -1,0 +1,9 @@
+#Java class files
+*.class
+#generated files
+bin/
+build/
+#Eclipse project files
+.classpath
+.project
+.DS_Store
