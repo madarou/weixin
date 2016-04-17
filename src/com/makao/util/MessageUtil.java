@@ -16,6 +16,8 @@ import org.dom4j.io.SAXReader;
 
 import com.makao.po.Image;
 import com.makao.po.ImageMessage;
+import com.makao.po.Music;
+import com.makao.po.MusicMessage;
 import com.makao.po.News;
 import com.makao.po.NewsMessage;
 import com.makao.po.TextMessage;
@@ -33,15 +35,17 @@ public class MessageUtil {
 	public static final String MESSAGE_TEXT = "text";
 	public static final String MESSAGE_NEWS = "news";//图文消息
 	public static final String MESSAGE_IMAGE = "image";
+	public static final String MESSAGE_MUSIC = "music";
 	public static final String MESSAGE_VOICE = "voice";
 	public static final String MESSAGE_VIDEO = "video";
 	public static final String MESSAGE_LOCATION = "location";
 	public static final String MESSAGE_LINK = "link";
 	public static final String MESSAGE_EVENT = "event";
 	public static final String MESSAGE_SUBSCRIBE = "subscribe";
-	public static final String MESSAGE_SCAN = "SCAN";
+	public static final String MESSAGE_SCANCODE = "scancode_push";
 	public static final String MESSAGE_CLICK = "CLICK";
 	public static final String MESSAGE_VIEW = "VIEW";
+	public static final String MESSAGE_SCAN = "SCAN";
 	
 	/**
 	 * @param request
@@ -72,6 +76,30 @@ public class MessageUtil {
 	 */
 	public static String onSubscriptionAutoReply(){
 		return "才来？！等你很久了";
+	}
+	
+	/**
+	 * @return
+	 * 菜单中的click菜单的click事件被触发时
+	 */
+	public static String onClickAutoReply(){
+		return "你点了click菜单";
+	}
+	
+	/**
+	 * @return
+	 * 菜单中的view菜单的view事件被触发时
+	 */
+	public static String onViewAutoReply(){
+		return "你点了view菜单";
+	}
+	
+	/**
+	 * @return
+	 * 菜单中的弹出二维码工具的事件被触发时
+	 */
+	public static String onScanCodeAutoReply(){
+		return "你打开了二维码扫码器";
 	}
 	
 	/**
@@ -199,4 +227,50 @@ public class MessageUtil {
 		
 		return imageMessageToXml(imageMessage);
 	}
+	
+	/**
+	 * <xml>
+		<ToUserName><![CDATA[toUser]]></ToUserName>
+		<FromUserName><![CDATA[fromUser]]></FromUserName>
+		<CreateTime>12345678</CreateTime>
+		<MsgType><![CDATA[music]]></MsgType>
+		<Music>
+		<Title><![CDATA[TITLE]]></Title>
+		<Description><![CDATA[DESCRIPTION]]></Description>
+		<MusicUrl><![CDATA[MUSIC_Url]]></MusicUrl>
+		<HQMusicUrl><![CDATA[HQ_MUSIC_Url]]></HQMusicUrl>
+		<ThumbMediaId><![CDATA[media_id]]></ThumbMediaId>
+		</Music>
+		</xml>
+	 * @param musicMessage
+	 * @return
+	 * 将音乐消息转换成xml
+	 */
+	public static String musicMessageToXml(MusicMessage musicMessage){
+		XStream xstream = new XStream();
+		//原始组装的根节点是com.makao.po.MusicMessage，将它转换成'xml'，与微信文档中定义的一致
+		xstream.alias("xml", musicMessage.getClass());
+		//里面的com.makao.po.Music也要手动修改为Music
+		xstream.alias("Music", new Music().getClass());
+		return xstream.toXML(musicMessage);
+	}
+	
+	/**
+	 * @param toUserName
+	 * @param fromUserName
+	 * @param music
+	 * @return
+	 * 重载的将音乐消息转换成xml
+	 */
+	public static String musicMessageToXml(String toUserName, String fromUserName, Music music){
+		MusicMessage musicMessage = new MusicMessage();
+		musicMessage.setFromUserName(toUserName);
+		musicMessage.setToUserName(fromUserName);
+		musicMessage.setCreateTime(new Date().toGMTString());
+		musicMessage.setMsgType(MESSAGE_MUSIC);
+		musicMessage.setMusic(music);
+		
+		return musicMessageToXml(musicMessage);
+	}
+	
 }

@@ -13,6 +13,7 @@ import javax.servlet.annotation.*;
 import org.dom4j.DocumentException;
 
 import com.makao.po.Image;
+import com.makao.po.Music;
 import com.makao.po.News;
 import com.makao.po.TextMessage;
 import com.makao.util.CheckUtil;
@@ -55,12 +56,11 @@ public class WeixinServlet extends HttpServlet {
 			String msgId = map.get("MsgId");
 
 			String message = null;
-			//处理文本消息
+			//如果用户发送过来的是文本消息，处理文本消息
 			if (MessageUtil.MESSAGE_TEXT.equals(msgType)) {
 				//创建关键字回复
 				if("你好".equals(content) || "hello".equals(content)){
 					message = MessageUtil.textMessageToXml(toUserName, fromUserName, "你好");
-					
 				}else if("图文".equals(content)){//创建图文消息回复
 					News news = new News();
 					news.setTitle("鱼圈圈水族");
@@ -74,9 +74,17 @@ public class WeixinServlet extends HttpServlet {
 				}else if("图片".equals(content)){//创建图片消息回复
 					Image image = new Image();
 					//这里的media_id是从com.makao.weixin.test.WeixinTest中请求上传url后返回获取到的临时图片media_id，
-					//只能保留三天有效，这里是测试用
+					//只能保留三天有效，这里是测试用GxK1O6cUp2udZmIg8nY9Kt0AUFof3D99-KHAPf1qp8tNcyFKRUHViRBwjlsUvzSc
 					image.setMediaId("M85cAWmhyB-yy2OhMs6gAmmD3-yg7Cckx9cOgDVhkyE9-WY5ukNuaEbc5u0tDO22");
 					message = MessageUtil.imageMessageToXml(toUserName, fromUserName, image);
+				}else if("音乐".equals(content)){//创建音乐消息回复
+					Music music = new Music();
+					music.setTitle("JAY");
+					music.setDescription("JAY钢琴串烧");
+					music.setMusicUrl("http://madarou.ngrok.cc/weixin/resource/JAY.mp3");
+					music.setHQMusicUrl("http://madarou.ngrok.cc/weixin/resource/JAY.mp3");
+					music.setThumbMediaId("vMYFttBwg941tO0QJFxkAjjjMS6eZsbvo2W7-LOqANNjPsh71RuKSsMHSIxm_ba0");
+					message = MessageUtil.musicMessageToXml(toUserName, fromUserName, music);
 				}else{//创建默认回复
 					TextMessage text = new TextMessage();
 					text.setFromUserName(toUserName);
@@ -87,10 +95,23 @@ public class WeixinServlet extends HttpServlet {
 	
 					message = MessageUtil.textMessageToXml(text);
 				}
-			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){
+			}else if(MessageUtil.MESSAGE_LOCATION.equals(msgType)){//如果用户发送过来的是地理位置消息，而不是文本消息
+				//获取用户的地理位置，并返回给他
+				String location_label = map.get("Label");
+				//这里客户端会收到自己地理位置信息的回复
+				message = MessageUtil.textMessageToXml(toUserName, fromUserName, location_label+" "+map.get("EventKey"));
+			}else if(MessageUtil.MESSAGE_EVENT.equals(msgType)){//如果用户触发了某个事件，处理事件
 				String eventType = map.get("Event");
-				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){
-					message = MessageUtil.textMessageToXml(toUserName, fromUserName, MessageUtil.onSubscriptionAutoReply());
+				if(MessageUtil.MESSAGE_SUBSCRIBE.equals(eventType)){//如果事件是关注事件，则回复关注者一条欢迎关注的相关信息
+					message = MessageUtil.textMessageToXml(toUserName, fromUserName, MessageUtil.onSubscriptionAutoReply()+" "+map.get("EventKey"));
+				}else if(MessageUtil.MESSAGE_CLICK.equals(eventType)){//如果事件是click事件，则回复关注者一条CLick相关信息
+					message = MessageUtil.textMessageToXml(toUserName, fromUserName, MessageUtil.onClickAutoReply()+" "+map.get("EventKey"));
+				}else if(MessageUtil.MESSAGE_VIEW.equals(eventType)){//如果事件是view事件，则回复关注者一条View相关信息
+					//这里消息message是组装成功的，但是客户端不会收到下面设置的回复，这里主要用来做其他逻辑
+					message = MessageUtil.textMessageToXml(toUserName, fromUserName, MessageUtil.onViewAutoReply()+" "+map.get("EventKey"));
+				}else if(MessageUtil.MESSAGE_SCANCODE.equals(eventType)){//如果事件是扫码事件，则回复关注者一条View相关信息
+					//这里消息message是组装成功的，但是客户端不会收到下面设置的回复，这里主要用来做其他逻辑
+					message = MessageUtil.textMessageToXml(toUserName, fromUserName, MessageUtil.onScanCodeAutoReply()+" "+map.get("EventKey"));
 				}
 			}
 			System.out.println(message);
