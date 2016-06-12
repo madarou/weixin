@@ -65,7 +65,7 @@ public class WeixinServlet extends HttpServlet {
 					News news = new News();
 					news.setTitle("鱼圈圈水族");
 					news.setDescription("成都鱼圈圈水族馆");
-					news.setPicUrl("http://madarou.ngrok.cc/weixin/img/yqq.jpeg");
+					news.setPicUrl("http://madarou1.ngrok.cc/weixin/img/yqq.jpeg");
 					news.setUrl("www.yuqq.cc");
 					List<News> news_items = new ArrayList<News>();//可以创建多个图文消息，都放到list中就行
 					news_items.add(news);
@@ -75,15 +75,15 @@ public class WeixinServlet extends HttpServlet {
 					Image image = new Image();
 					//这里的media_id是从com.makao.weixin.test.WeixinTest中请求上传url后返回获取到的临时图片media_id，
 					//只能保留三天有效，这里是测试用GxK1O6cUp2udZmIg8nY9Kt0AUFof3D99-KHAPf1qp8tNcyFKRUHViRBwjlsUvzSc
-					image.setMediaId("M85cAWmhyB-yy2OhMs6gAmmD3-yg7Cckx9cOgDVhkyE9-WY5ukNuaEbc5u0tDO22");
+					image.setMediaId("qtflXFXBnmImScE5EoHs5SZgBU_SomZ3WgZtXYMO5mUdW4vU8BgTL-lt8jBL6dn9");
 					message = MessageUtil.imageMessageToXml(toUserName, fromUserName, image);
 				}else if("音乐".equals(content)){//创建音乐消息回复
 					Music music = new Music();
 					music.setTitle("JAY");
 					music.setDescription("JAY钢琴串烧");
-					music.setMusicUrl("http://madarou.ngrok.cc/weixin/resource/JAY.mp3");
-					music.setHQMusicUrl("http://madarou.ngrok.cc/weixin/resource/JAY.mp3");
-					music.setThumbMediaId("vMYFttBwg941tO0QJFxkAjjjMS6eZsbvo2W7-LOqANNjPsh71RuKSsMHSIxm_ba0");
+					music.setMusicUrl("http://madarou1.ngrok.cc/weixin/resource/JAY.mp3");
+					music.setHQMusicUrl("http://madarou1.ngrok.cc/weixin/resource/JAY.mp3");
+					music.setThumbMediaId("Km8RvxqCPK2vHHQ69lb8aOeAMZ4G67ZcgR1QbJi3TenS_xR9ZPNhWizHbpU_UcmT");
 					message = MessageUtil.musicMessageToXml(toUserName, fromUserName, music);
 				}else{//创建默认回复
 					TextMessage text = new TextMessage();
