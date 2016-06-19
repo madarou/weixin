@@ -36,7 +36,7 @@ public class WeixinPrePayServlet extends HttpServlet {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe41d04b7ffb9ea2a&redirect_uri=http%3a%2f%2fyuqq.cc%2fweixin%2fWeixinPay&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
+	 * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxe41d04b7ffb9ea2a&redirect_uri=http%3a%2f%2fyuqq.cc%2fweixin%2fWeixinPrePay&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
 	 * 中的回调函数回调，完成网页授权过程，中间获取到要用于下单的用户在该公众号下面的openid, 然后返回用户下单页面,里面显示要下单的订单内容
 	 */
 	@Override
