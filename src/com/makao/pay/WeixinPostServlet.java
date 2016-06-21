@@ -205,7 +205,7 @@ public class WeixinPostServlet extends HttpServlet {
 			counter = 0;
 			request.getServletContext().setAttribute("counter",counter);
 		}
-		response.setHeader("content-type", "text/html;charset=UTF-8");
+		response.setHeader("content-type", "text/xml;charset=UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		String page = "";
@@ -213,40 +213,32 @@ public class WeixinPostServlet extends HttpServlet {
 		String return_code = request.getParameter("return_code");
 		String return_msg = request.getParameter("return_msg");
 		
-		//Map<String, String> resultXML = null;
+		Map<String, String> resultXML = null;
 		String resultString = "";
 		try {
-			resultString = parseXmlToString(request);
+			//resultString = parseXmlToString(request);
+			resultXML = parseXml(request);
 		} catch (DocumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		prop.setProperty("post paid return: ",resultString + "      counter:"+counter);
-	    write("/wxpostpay.txt");
-		page = "<!DOCTYPE html>"
-				+ "<html>"
-				+ "<head>"
-					+ "<meta charset=\"utf-8\">"
-					+ "<title>订单支付结果</title>"
-					+ "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=0\">"
-					+ "<link rel=\"stylesheet\" href=\"static/css/weixin.css\">"
-				+ "</head>"
-				+"<body>"
-					+ "<div class=\"wxapi_container\">"
-						+"<div class=\"lbox_close wxapi_form\">"
-							+ "<h3 id=\"menu-pay\">return code: "+return_code+"</h3>"
-							+ "<span class=\"desc\">return_msg: "+return_msg+"</span>"
-							+ "<span class=\"desc\">result xml: "+resultString+"</span>"
-						+"</div>"
-					+ "</div>"
-				+ "</body>"
-				+"<script src=\"http://res.wx.qq.com/open/js/jweixin-1.0.0.js\"></script>"
-			+ "</html>";
-		out.write(page);
+		//prop.setProperty("post paid return: ",resultString + "      counter:"+counter);
+		prop.setProperty("result_code: ",resultXML.get("result_code")+"      counter:"+counter);
+		write("/wxpostpay.txt");
+	    //如果微信返回来的结果是支付成功，回复微信success消息，并将对应订单支付成功的消息写入对应订单
+	    if("SUCCESS".equals(resultXML.get("result_code"))){
+	    	String openid = resultXML.get("openid");
+	    	String orderid = resultXML.get("out_trade_no");
+	    	//根据openid找到对应下单的用户，赠送积分或做其他操作
+	    	//根据orderid在数据库orderOn中插入一条状态为"排队中"的订单，注意订单此时才生成
+	    	
+	    	page = "<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>";
+			out.write(page);
+	    }
 	}
 	
-	public static Map<String, String> parseXml(HttpServletRequest request) throws IOException, DocumentException {
+	public Map<String, String> parseXml(HttpServletRequest request) throws IOException, DocumentException {
 			    // 解析结存储HashMap
 			    Map<String, String> map = new HashMap<String, String>();
 			    InputStream inputStream = request.getInputStream();
