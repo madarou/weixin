@@ -66,6 +66,9 @@ public class WeixinPayServlet extends HttpServlet {
 		u.setTrade_type("JSAPI");
 		u.setOpenid(openid);
 		u.setDevice_info("WEB");
+		u.setAttach("1");//测试带用户附加数据，因为在商城中需要cityId
+		String detail = "{\"goods_detail\":[{\"goods_id\":\"iphone6s_16G\",\"goods_name\":\"iPhone6s 16G\",\"quantity\":1,\"price\":528800,\"goods_category\":\"数码\",\"body\":\"苹果手机\"}]}";
+		u.setDetail(detail);
 		// 还有签名没有，下面生成sign签名
 		// 生成sign签名，这里必须用SortedMap，因为签名算法里key值是要排序的
 		SortedMap<Object, Object> parameters = new TreeMap<Object, Object>();
@@ -80,6 +83,8 @@ public class WeixinPayServlet extends HttpServlet {
 		parameters.put("spbill_create_ip", u.getSpbill_create_ip());
 		parameters.put("openid", u.getOpenid());
 		parameters.put("device_info", u.getDevice_info());
+		parameters.put("attach", u.getAttach());
+		parameters.put("detail", u.getDetail());
 		u.setSign(SignatureUtil.createSign(parameters, WeixinConstants.PAY_KEY));
 
 		// 提交到微信统一订单接口，用xml格式提交和接收

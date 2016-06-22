@@ -19,6 +19,8 @@ public class Unifiedorder {
 	private String trade_type;
 	private String openid;
 	private String device_info;
+	private String attach;
+	private String detail;
 	public String getAppid() {
 		return appid;
 	}
@@ -96,6 +98,18 @@ public class Unifiedorder {
 	}
 	public void setDevice_info(String device_info) {
 		this.device_info = device_info;
+	}
+	public String getAttach() {
+		return attach;
+	}
+	public void setAttach(String attach) {
+		this.attach = attach;
+	}
+	public String getDetail() {
+		return detail;
+	}
+	public void setDetail(String detail) {
+		this.detail = detail;
 	}
 	
 }

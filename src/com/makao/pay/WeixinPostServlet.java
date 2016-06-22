@@ -224,7 +224,7 @@ public class WeixinPostServlet extends HttpServlet {
 		}
 
 		//prop.setProperty("post paid return: ",resultString + "      counter:"+counter);
-		prop.setProperty("result_code: ",resultXML.get("result_code")+"      counter:"+counter);
+		prop.setProperty("result_code: ",resultXML.get("result_code")+"      counter:"+counter+"      attach:"+resultXML.get("attach"));
 		write("/wxpostpay.txt");
 	    //如果微信返回来的结果是支付成功，回复微信success消息，并将对应订单支付成功的消息写入对应订单
 	    if("SUCCESS".equals(resultXML.get("result_code"))){
